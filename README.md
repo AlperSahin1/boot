@@ -1,4 +1,4 @@
-# boot
+# boot   Tüm Ödevler
 Proje Patika Temel Python
 
 #Problem 1:
@@ -32,3 +32,43 @@ elif delta == 0:
     print("Denklem çift kat köke sahiptir ve kökler:", kok1)
 else:
     print("Denklemin reel sayılarda kökü bulunmamaktadır.")
+    
+    
+    
+    
+    
+    
+import matplotlib.pyplot as plt
+import seaborn as sns
+dataset2 = pd.read_csv("ev_fiyat_tahmini.csv",sep=';')  #Dosya pd.read komutuyla çağrılır.
+dataset2
+
+dataset2.isnull().sum() #Çalışılacak data içinde nan veri var mı kontrolünü sağlamak için
+dt_new=dataset2.drop(['oda_sayısı','index'],axis=1) #Çalışılacak data içinde gereksiz sütunlar kaldırılır.
+dt_new
+x = dt_new.iloc[:,:-1].values #Bağımsız değişkenler x değişkenine atanır.
+y = dt_new.iloc[:,-1].values  #Bağımlı değişkenler y değişkenine atanır.
+from sklearn.linear_model import LinearRegression
+model= LinearRegression()
+model.fit(x,y)
+print(model.coef_)
+print(model.intercept_)
+y_predict = model.coef_*x + model.intercept_
+plt.title('m^2 - Satış Fiyatı')
+plt.xlabel("m^2")
+plt.ylabel("Satış Fiyatı")
+plt.scatter(x,y,color="blue")
+plt.plot( x, y_predict,color = "red")
+plt.show()
+
+import statsmodels.api as sm
+linearModelStats = sm.OLS(y,x) #ilk değer bağımlı ikinci bağımsız değişken
+
+modelSTATS= linearModelStats.fit()
+print("STATS Model Değerleri:", modelSTATS.summary())
+
+Yorumlar
+Sklearn kütüphanesiyle problem çözdürüldüğünde:
+
+Grafikte tüm veri setlerini içeren ve optimum noktadan geçen bir doğru çizilerek tahminleme yapılabildiği gözlemlenmiştir. Bazı evlerin gerçekte daha pahalı veya daha ucuz olmasının sebebi problemi tek boyutta incelememizdir. Eğer oda sayısını da bir girdi olarak alsaydık ve multiple linear regression veya polynomial
+regression yöntemlerini kullansaydık,tahminimiz daha kuvvetli olabilirdi. Statsmodel kütüphanesiyle problem çözdürüldüğünde: Eğim değerinin sklearn'e göre farklı geldiği gözükmektedir. Kurtosis (Basıklık) değeri 1'den büyüktür bu yüzden istenilen sınırlarda değildir. Skew(Çarpıklık) değeri ise 0'a yakın olduğundan bu değer istenilen aralıktadır.
